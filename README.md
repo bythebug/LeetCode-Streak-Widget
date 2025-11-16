@@ -5,18 +5,26 @@ A native macOS widget that displays your LeetCode submission progress on your de
 ## Features
 
 - 📊 **Total Problems Solved**: Shows your current LeetCode submission count
-- 📅 **49-Day Calendar**: Visual 7×7 grid showing submission activity over the last 49 days
+- 📅 **Full Year Calendar**: Visual calendar showing submission activity over the last 12 months (organized in a 3×4 month grid)
+- 📱 **Desktop Widget**: Compact 7×7 grid (49 days) for quick desktop access
 - 🔄 **Auto-Sync**: Configurable sync frequency (Live, Hourly, Daily)
 - 💾 **Smart Caching**: Data cached locally with automatic refresh
 - 🌐 **Offline Support**: Works with cached data when offline
 - 🎨 **Modern Design**: Native macOS Tahoe UI with rounded fonts and clean styling
+- 🚀 **Standalone App**: Use as both a widget and a full-featured macOS app with first-time setup wizard
 
 ## Screenshots
 
-The widget displays:
+The app displays:
 - **Title**: "LeetCode Progress"
 - **Subtitle**: "Solved X problems"
-- **Grid**: 7×7 squares (green = submissions, grey = no submissions)
+- **Full Year Calendar**: 12 months organized in a 3×4 grid, each month showing submission activity
+- **Grid Squares**: Green = days with submissions, Grey = days without submissions
+
+The widget shows:
+- **Compact View**: 7×7 grid (49 days) with the same visual style
+- **Title**: "LeetCode Progress"
+- **Subtitle**: "Solved X problems"
 
 ## Requirements
 
@@ -101,11 +109,12 @@ Right-click the widget → **Edit Widget** to configure:
 
 ### Using the Main App
 
-The main app shows the same information as the widget:
-- Open **LeetCodeWidget macOS** from Applications
-- View your total solved problems
-- Click **Refresh Data** to manually update
-- Keep it running in the background if you prefer
+The main app provides a full-featured experience:
+- **First-Time Setup**: Prompts for LeetCode username on first launch
+- **Full Year View**: See all 12 months of submission activity in a scrollable grid
+- **Change Username**: Update your LeetCode username anytime from the app
+- **Manual Refresh**: Click **Refresh Data** to manually update
+- **Detailed Calendar**: Each month shows a complete calendar grid with day-of-week alignment
 
 ## Project Structure
 
@@ -135,7 +144,9 @@ LeetCodeWidget/
 1. **Data Fetching**: Fetches data from LeetCode's GraphQL API
 2. **Caching**: Stores data in App Group shared container
 3. **Refresh Logic**: Updates based on configured sync frequency
-4. **Display**: Shows total solved and 49-day submission calendar
+4. **Display**: 
+   - **App**: Shows total solved and full year (12 months) submission calendar
+   - **Widget**: Shows total solved and compact 49-day submission calendar
 
 ## Building a DMG
 

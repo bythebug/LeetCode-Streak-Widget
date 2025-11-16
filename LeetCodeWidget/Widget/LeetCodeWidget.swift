@@ -101,7 +101,7 @@ struct LeetCodeWidgetView: View {
                     .font(.system(size: 13, weight: .medium, design: .rounded))
                     .foregroundStyle(.secondary)
                 
-                // 7x7 Grid
+                // 7x7 Grid (last 49 days for widget - compact view)
                 GridView(calendar: stats.submissionCalendar)
                     .padding(.top, 6)
             } else if let error = entry.error {
@@ -121,38 +121,63 @@ struct LeetCodeWidgetView: View {
 struct GridView: View {
     let calendar: [Int: Int]
     
-    // Calculate the last 49 days
+    // Calculate the last 49 days organized by day of week (for widget - compact view)
+    // Columns = days of week (7 columns), Rows = weeks (fill top to bottom in each column)
     private var gridData: [Int] {
         let cal = Calendar.current
         let today = cal.startOfDay(for: Date())
-        var data: [Int] = []
+        var data: [Int] = Array(repeating: 0, count: 49)
         
-        // Get last 49 days (including today)
-        for i in 0..<49 {
-            if let date = cal.date(byAdding: .day, value: -i, to: today) {
-                let startOfDay = cal.startOfDay(for: date)
-                let timestamp = Int(startOfDay.timeIntervalSince1970)
-                let count = self.calendar[timestamp] ?? 0
-                data.append(count)
-            } else {
-                data.append(0)
+        // Find date 48 days ago
+        guard let startDate = cal.date(byAdding: .day, value: -48, to: today) else {
+            return data
+        }
+        
+        // Find the Sunday of the week containing startDate
+        let startWeekday = cal.component(.weekday, from: startDate) - 1 // 0=Sunday
+        guard let weekStart = cal.date(byAdding: .day, value: -startWeekday, to: startDate) else {
+            return data
+        }
+        
+        // Fill grid: columns = days of week (7 columns), fill top to bottom in each column
+        // Column 0 gets days 0, 7, 14, 21, 28, 35, 42
+        // Column 1 gets days 1, 8, 15, 22, 29, 36, 43
+        // etc.
+        for col in 0..<7 {
+            for row in 0..<7 {
+                let daysOffset = row * 7 + col
+                if let date = cal.date(byAdding: .day, value: daysOffset, to: weekStart) {
+                    // Only include dates within our 49-day range
+                    if date >= startDate && date <= today {
+                        let startOfDay = cal.startOfDay(for: date)
+                        let timestamp = Int(startOfDay.timeIntervalSince1970)
+                        let count = self.calendar[timestamp] ?? 0
+                        // Store in transposed order: col * 7 + row
+                        data[col * 7 + row] = count
+                    }
+                }
             }
         }
         
-        return data.reversed() // Oldest to newest (left to right, top to bottom)
+        return data
     }
     
     var body: some View {
+        // Display: 7 columns, each column has 7 rows (filled top to bottom)
         let columns = Array(repeating: GridItem(.fixed(8), spacing: 2), count: 7)
         
         LazyVGrid(columns: columns, spacing: 2) {
-            ForEach(0..<49, id: \.self) { index in
-                let count = gridData[index]
-                let color = count > 0 ? Color.green : Color.gray.opacity(0.3)
-                
-                Rectangle()
-                    .fill(color)
-                    .frame(width: 8, height: 8)
+            // Display in transposed order: column by column, top to bottom
+            ForEach(0..<7, id: \.self) { col in
+                ForEach(0..<7, id: \.self) { row in
+                    let index = col * 7 + row
+                    let count = gridData[index]
+                    let color = count > 0 ? Color.green : Color.gray.opacity(0.3)
+                    
+                    Rectangle()
+                        .fill(color)
+                        .frame(width: 8, height: 8)
+                }
             }
         }
     }

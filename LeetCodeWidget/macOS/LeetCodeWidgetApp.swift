@@ -14,7 +14,7 @@ struct LeetCodeWidgetApp: App {
             ContentView()
         }
         .windowStyle(.automatic)
-        .defaultSize(width: 480, height: 360)
+        .defaultSize(width: 900, height: 800)
         .commands {
             CommandGroup(replacing: .newItem) {}
         }
